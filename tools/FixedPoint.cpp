@@ -18,7 +18,7 @@ using namespace std;
 
 struct FixedPointNumber {
     union {
-        uint32_t n;
+        uint32_t value;
         struct {
             uint32_t fraction : FRAC_BIT_LEN;
             uint32_t integer  : INT_BIT_LEN;
@@ -43,21 +43,18 @@ double convert_to_double(FixedPointNumber n)
     double d = 0;
     if (SIGN_BIT_LEN == 1) {
         if (n.sign) {
-            d += (~n.integer + 1) & ((1 << INT_BIT_LEN) - 1);
-            d *= -1;
+            d = (~n.value+1) & ((1<<TOTAL_BIT_LEN)-1);
+            d = -d;
         }
         else {
-            d += n.integer;
+            d = n.value;
         }
+        d /= (1 << FRAC_BIT_LEN);
     }
     else {
         throw invalid_argument("SIGN_BIT_LEN must be 1");
     }
 
-    for (int i = 1; i <= FRAC_BIT_LEN; ++i) {
-        double addv = ((n.fraction >> (FRAC_BIT_LEN-i)) & 1) * pow(2, -i);
-        d += addv;
-    }
     return d;
 }
 
@@ -71,27 +68,14 @@ FixedPointNumber convert_to_fixedpoint(double d)
             throw invalid_argument("d exceeds max limit");
         }
 
-        double frac = 0;
-        if (d < 0) {
-            n.sign = 1;
-            d *= -1;
-            n.integer = (~(int)floor(d)) & ((1 << INT_BIT_LEN) - 1);
-            frac = ceil(d) - d;
-        }
-        else {
-            n.sign = 0;
-            n.integer = (int)floor(d);
-            frac = d - floor(d);
-        }
+        bool sign = d < 0;
+        if (sign)
+            d = -d;
+        d *= (1 << FRAC_BIT_LEN);
+        n.value = d;
+        if (sign)
+            n.value = (~n.value+1) & ((1<<TOTAL_BIT_LEN)-1);
 
-        n.fraction = 0;
-        for (int i = 1; i <= FRAC_BIT_LEN; ++i) {
-            double p2 = pow(2, -i);
-            if (frac >= p2) {
-                n.fraction |= 1 << (FRAC_BIT_LEN-i);
-                frac -= p2;
-            }
-        }
     }
     else {
         throw invalid_argument("SIGN_BIT_LEN must be 1");
@@ -114,11 +98,11 @@ int main() {
     };
     for (int i = 0; i < sizeof(test_value) / sizeof(uint32_t); ++i) {
         FixedPointNumber fp;
-        fp.n = test_value[i];
+        fp.value = test_value[i];
         double d = convert_to_double(fp);
         cout << d << endl;
         FixedPointNumber cfp = convert_to_fixedpoint(d);
-        assert(fp.n == cfp.n);
+        assert(fp.value == cfp.value);
         cout << cfp << endl;
     }
     return 0;
