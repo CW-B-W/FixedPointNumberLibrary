@@ -6,19 +6,21 @@
 
 using namespace std;
 
-FixedPointNumber::FixedPointNumber()
+template<int INT_BIT_LEN, int FRAC_BIT_LEN>
+FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::FixedPointNumber()
 {
     this->value = 0;
 }
 
-FixedPointNumber::FixedPointNumber(uint32_t u32)
+template<int INT_BIT_LEN, int FRAC_BIT_LEN>
+FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::FixedPointNumber(uint32_t u32)
 {
     this->value = u32;
 }
 
-FixedPointNumber::FixedPointNumber(double d)
+template<int INT_BIT_LEN, int FRAC_BIT_LEN>
+FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::FixedPointNumber(double d)
 {
-    FixedPointNumber &n = *this;
     if (SIGN_BIT_LEN == 1) {
         double n_max =  (1 << INT_BIT_LEN);
         double n_min = -(1 << INT_BIT_LEN);
@@ -40,12 +42,14 @@ FixedPointNumber::FixedPointNumber(double d)
     }
 }
 
-uint32_t FixedPointNumber::get_value()
+template<int INT_BIT_LEN, int FRAC_BIT_LEN>
+uint32_t  FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::get_value()
 {
     return this->value;
 }
 
-double FixedPointNumber::to_double()
+template<int INT_BIT_LEN, int FRAC_BIT_LEN>
+double FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::to_double()
 {
     FixedPointNumber &n = *this;
     double d = 0;
@@ -67,7 +71,8 @@ double FixedPointNumber::to_double()
 }
 
 
-FixedPointNumber FixedPointNumber::operator- () const
+template<int INT_BIT_LEN, int FRAC_BIT_LEN>
+FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN> FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::operator- () const
 {
     FixedPointNumber fp;
     uint32_t n = get_int_frac_part(this->value);
@@ -76,7 +81,8 @@ FixedPointNumber FixedPointNumber::operator- () const
     return fp;
 }
 
-FixedPointNumber FixedPointNumber::operator* (const FixedPointNumber &rhs) const
+template<int INT_BIT_LEN, int FRAC_BIT_LEN>
+FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN> FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::operator* (const FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN> &rhs) const
 {
     FixedPointNumber &lhs = *const_cast<FixedPointNumber*>(this);
     uint8_t  sign = lhs.sign ^ rhs.sign;
@@ -102,44 +108,57 @@ FixedPointNumber FixedPointNumber::operator* (const FixedPointNumber &rhs) const
         return res;
 }
 
-FixedPointNumber FixedPointNumber::operator+ (const FixedPointNumber &rhs) const
+template<int INT_BIT_LEN, int FRAC_BIT_LEN>
+FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN> FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::operator+ (const FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN> &rhs) const
 {
     FixedPointNumber &lhs = *const_cast<FixedPointNumber*>(this);
     return FixedPointNumber(apply_bit_mask(lhs.value + rhs.value));
 }
 
-ostream& operator<<(ostream &out, const FixedPointNumber &n)
+template<int INT_BIT_LEN, int FRAC_BIT_LEN>
+ostream& operator<<(ostream &out, const FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN> &n)
 {
     out << "0x";
     uint32_t u32 = 0;
     u32 |= n.sign    << (INT_BIT_LEN + FRAC_BIT_LEN);
     u32 |= n.integer << (FRAC_BIT_LEN);
     u32 |= n.fraction;
-    out << setw((TOTAL_BIT_LEN+3)/4) << setfill('0') << hex << u32;
+    out << setw((n.TOTAL_BIT_LEN+3)/4) << setfill('0') << hex << u32;
     return out;
 }
 
-uint32_t FixedPointNumber::get_sign_part(uint32_t n)
+template<int INT_BIT_LEN, int FRAC_BIT_LEN>
+uint32_t FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::get_sign_part(uint32_t n)
 {
     return (n >> (INT_BIT_LEN+FRAC_BIT_LEN)) & ((1 << SIGN_BIT_LEN)-1);
 }
 
-uint32_t FixedPointNumber::get_integer_part(uint32_t n)
+template<int INT_BIT_LEN, int FRAC_BIT_LEN>
+uint32_t FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::get_integer_part(uint32_t n)
 {
     return (n >> (FRAC_BIT_LEN)) & ((1 << INT_BIT_LEN)-1);
 }
 
-uint32_t FixedPointNumber::get_fraction_part(uint32_t n)
+template<int INT_BIT_LEN, int FRAC_BIT_LEN>
+uint32_t FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::get_fraction_part(uint32_t n)
 {
     return (n >> (0)) & ((1 << FRAC_BIT_LEN)-1);
 }
 
-uint32_t FixedPointNumber::get_int_frac_part(uint32_t n)
+template<int INT_BIT_LEN, int FRAC_BIT_LEN>
+uint32_t FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::get_int_frac_part(uint32_t n)
 {
     return (n >> (0)) & ((1 << (INT_BIT_LEN+FRAC_BIT_LEN))-1);
 }
 
-uint32_t FixedPointNumber::apply_bit_mask(uint32_t n)
+template<int INT_BIT_LEN, int FRAC_BIT_LEN>
+uint32_t FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::apply_bit_mask(uint32_t n)
 {
     return n & ((1<<TOTAL_BIT_LEN)-1);
 }
+
+template class FixedPointNumber<3, 16>;
+template std::ostream& operator<<(std::ostream &out, const FixedPointNumber<3, 16> &n);
+
+template class FixedPointNumber<7, 8>;
+template std::ostream& operator<<(std::ostream &out, const FixedPointNumber<7, 8> &n);
