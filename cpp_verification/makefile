@@ -5,13 +5,13 @@ help:
 .PHONY: FIRFilter
 FIRFilter: bin/FIRFilter.out
 
-bin/FIRFilter.out: src/FIRFilter.cpp src/FixedPointNumber.cpp
+bin/FIRFilter.out: src/FIRFilter.cpp
 	g++ -o $@ $^ --std=c++17 -O3 -Wall
 
 .PHONY: FixedPointNumberTest
 FixedPointNumberTest: bin/FixedPointNumberTest.out
 
-bin/FixedPointNumberTest.out: src/FixedPointNumber.cpp src/FixedPointNumberTest.cpp
+bin/FixedPointNumberTest.out: src/FixedPointNumberTest.cpp
 	g++ -o $@ $^ --std=c++17 -O3 -Wall
 
 .PHONY: clean

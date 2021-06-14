@@ -6,6 +6,8 @@
 
 using namespace std;
 
+extern void test();
+
 int main()
 {
     FixedPointNumber<3, 16> fp1;
