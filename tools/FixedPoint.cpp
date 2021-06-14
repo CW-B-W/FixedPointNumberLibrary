@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <cmath>
 #include <stdexcept>
+#include <cassert>
 
 using namespace std;
 
@@ -10,6 +11,10 @@ using namespace std;
 #define  SIGN_BIT_LEN  1
 #define   INT_BIT_LEN  3
 #define  FRAC_BIT_LEN 16
+
+#if TOTAL_BIT_LEN != (SIGN_BIT_LEN + INT_BIT_LEN + FRAC_BIT_LEN) || TOTAL_BIT_LEN > 32
+    #error "Error on defining bit lengths"
+#endif
 
 struct FixedPointNumber {
     union {
@@ -29,7 +34,7 @@ ostream& operator<<(ostream &out, const FixedPointNumber &n) {
     u32 |= n.sign    << (INT_BIT_LEN + FRAC_BIT_LEN);
     u32 |= n.integer << (FRAC_BIT_LEN);
     u32 |= n.fraction;
-    out << setw((SIGN_BIT_LEN+INT_BIT_LEN+FRAC_BIT_LEN+3)/4) << setfill('0') << hex << u32;
+    out << setw((TOTAL_BIT_LEN+3)/4) << setfill('0') << hex << u32;
     return out;
 }
 
@@ -113,6 +118,7 @@ int main() {
         double d = convert_to_double(fp);
         cout << d << endl;
         FixedPointNumber cfp = convert_to_fixedpoint(d);
+        assert(fp.n == cfp.n);
         cout << cfp << endl;
     }
     return 0;
