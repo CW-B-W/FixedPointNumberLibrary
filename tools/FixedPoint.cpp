@@ -7,12 +7,12 @@
 
 using namespace std;
 
-#define TOTAL_BIT_LEN 20
-#define  SIGN_BIT_LEN  1
-#define   INT_BIT_LEN  3
-#define  FRAC_BIT_LEN 16
+#define  SIGN_BIT_LEN ( 1)
+#define   INT_BIT_LEN ( 3)
+#define  FRAC_BIT_LEN (16)
+#define TOTAL_BIT_LEN ((SIGN_BIT_LEN)+(INT_BIT_LEN)+(FRAC_BIT_LEN))
 
-#if TOTAL_BIT_LEN != (SIGN_BIT_LEN + INT_BIT_LEN + FRAC_BIT_LEN) || TOTAL_BIT_LEN > 32
+#if TOTAL_BIT_LEN > 32
     #error "Error on defining bit lengths"
 #endif
 
