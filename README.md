@@ -56,16 +56,28 @@ cout << setprecision(10) << (-fp).to_double() << endl;
 FixedPointNumber<3, 16> fp1(3.14159265359);
 FixedPointNumber<3, 16> fp2(2.71828182846);
 cout << setprecision(10) << (fp1+fp2).to_double() << endl;
+FixedPointNumber<3, 16> fp3(3.14159265359);
+FixedPointNumber<7, 8>  fp4(2.71828182846);
+cout << setprecision(10) << (fp3+fp4).to_double() << endl; // result will be FixedPointNumber<3, 16>
+cout << setprecision(10) << (fp4+fp3).to_double() << endl; // result will be FixedPointNumber<7, 8>
 // output:
 // 5.859863281
+// 5.856430054
+// 5.85546875
 ```
 * operator*
 ```C++
-FixedPointNumber<7, 8> fp1(3.14159265359);
-FixedPointNumber<7, 8> fp2(2.71828182846);
+FixedPointNumber<7, 8>  fp1(3.14159265359);
+FixedPointNumber<7, 8>  fp2(2.71828182846);
 cout << setprecision(10) << (fp1*fp2).to_double() << endl;
+FixedPointNumber<7, 8>  fp3(3.14159265359);
+FixedPointNumber<5, 10> fp4(2.71828182846);
+cout << setprecision(10) << (fp3*fp4).to_double() << endl; // result will be FixedPointNumber<7, 8>
+cout << setprecision(10) << (fp4*fp3).to_double() << endl; // result will be FixedPointNumber<5, 10>
 // output:
 // 8.5234375
+// 8.5234375
+// 8.53515625
 ```
 * operator<<
 ```C++
