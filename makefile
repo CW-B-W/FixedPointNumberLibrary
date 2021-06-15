@@ -1,19 +1,24 @@
 .PHONY: help
 help:
-	@printf "hi"
+	@printf 'usage: make <option>\n'
+	@printf '\n'
+	@printf 'options:\n'
+	@printf '\ttest\t\trun test\n'
+	@printf '\tclean\t\tclean compiled files\n'
 
-.PHONY: FIRFilter
-FIRFilter: bin/FIRFilter.out
+CC       = g++
+CXXFLAGS = -Wall -O3 --std=c++17
+DEPS     = src/FixedPointNumberTest.cpp include/FixedPointNumber.hpp
+SRCS     = src/FixedPointNumberTest.cpp
+INCLUDES = -I./include
 
-bin/FIRFilter.out: src/FIRFilter.cpp
-	g++ -o $@ $^ --std=c++17 -O3 -Wall
+.PHONY: Test
+test: bin/FixedPointNumberTest.out
+	bin/FixedPointNumberTest.out
 
-.PHONY: FixedPointNumberTest
-FixedPointNumberTest: bin/FixedPointNumberTest.out
-
-bin/FixedPointNumberTest.out: src/FixedPointNumberTest.cpp
-	g++ -o $@ $^ --std=c++17 -O3 -Wall
+bin/FixedPointNumberTest.out: $(DEPS)
+	$(CC) -o $@ $(SRCS) $(INCLUDES) $(CXXFLAGS)
 
 .PHONY: clean
 clean:
-	rm bin/*.out
+	rm -f bin/*.out

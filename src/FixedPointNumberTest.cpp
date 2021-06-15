@@ -2,7 +2,7 @@
 #include <cstdio>
 #include <vector>
 #include <iomanip>
-#include "../include/FixedPointNumber.hpp"
+#include "FixedPointNumber.hpp"
 
 using namespace std;
 
