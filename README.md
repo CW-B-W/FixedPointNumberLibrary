@@ -27,7 +27,7 @@ The below example instantiates a `FixedPointNumber` which has 1bit sign-bit, Xbi
 ```C++
 FixedPointNumber<X, Y> fp(...);
 ```
-And the constructor arguments can be of type, support `operator=`
+And the constructor arguments can be of type
 * uint32_t
 * int32_t
 * double
@@ -40,6 +40,7 @@ FixedPointNumber<3, 16> fp1(0xFFF9EU);
 FixedPointNumber<7, 8>  fp2(0x0067);
 FixedPointNumber<7, 8>  fp3(1.2345678);
 FixedPointNumber<3, 16> fp4(fp3);
+// support operator=
 FixedPointNumber<3, 16> fp5 = 1.2345678;
 FixedPointNumber<3, 16> fp6 = fp1;
 ```
