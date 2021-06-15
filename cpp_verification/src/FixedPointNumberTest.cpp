@@ -10,6 +10,14 @@ extern void test();
 
 int main()
 {
+    FixedPointNumber<3, 16> t1(0xFFF9EU);
+    FixedPointNumber<7, 8>  t2(0x0067);
+    FixedPointNumber<7, 8>  t3(0x008F);
+    cout << t1.to_double() << endl;
+    cout << t2.to_double() << endl;
+    cout << t3.to_double() << endl;
+    cout << endl;
+
     FixedPointNumber<3, 16> fp1;
     FixedPointNumber<3, 16> fp2;
 

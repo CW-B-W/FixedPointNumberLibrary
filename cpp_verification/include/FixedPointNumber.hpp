@@ -13,7 +13,8 @@ class FixedPointNumber
 public:
     inline FixedPointNumber();
     inline FixedPointNumber(uint32_t u32);
-    inline FixedPointNumber(double d);
+    inline FixedPointNumber( int32_t i32);
+    inline explicit FixedPointNumber(double d);
 
     inline uint32_t get_value();
     inline double   to_double();
@@ -71,6 +72,12 @@ template<int INT_BIT_LEN, int FRAC_BIT_LEN>
 FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::FixedPointNumber(uint32_t u32)
 {
     this->value = u32;
+}
+
+template<int INT_BIT_LEN, int FRAC_BIT_LEN>
+FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::FixedPointNumber(int32_t i32) : FixedPointNumber(static_cast<uint32_t>(i32))
+{
+
 }
 
 template<int INT_BIT_LEN, int FRAC_BIT_LEN>
