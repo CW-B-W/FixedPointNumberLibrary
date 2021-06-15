@@ -1,1 +1,0 @@
-# DIC-Frequency_Analysis_System
