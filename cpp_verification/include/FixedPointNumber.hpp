@@ -9,12 +9,16 @@ class FixedPointNumber
 {
     template<int T1, int T2>
     friend std::ostream& operator<<(std::ostream &out, const FixedPointNumber<T1, T2> &n);
+    template<int T1, int T2>
+    friend class FixedPointNumber;
     
 public:
     inline FixedPointNumber();
     inline FixedPointNumber(uint32_t u32);
     inline FixedPointNumber( int32_t i32);
     inline explicit FixedPointNumber(double d);
+    template<int T1, int T2>
+    inline explicit FixedPointNumber(FixedPointNumber<T1, T2> that);
 
     inline uint32_t get_value();
     inline double   to_double();
@@ -108,6 +112,27 @@ template<int INT_BIT_LEN, int FRAC_BIT_LEN>
 uint32_t  FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::get_value()
 {
     return this->value;
+}
+
+template<int INT_BIT_LEN, int FRAC_BIT_LEN>
+template<int T1, int T2>
+FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::FixedPointNumber(FixedPointNumber<T1, T2> that)
+{
+    uint32_t sign = that.get_sign_part(that.value);
+
+    uint32_t integer = that.get_integer_part(that.value);
+
+    uint32_t frac = that.get_fraction_part(that.value);
+    if (T2 > FRAC_BIT_LEN) {
+        frac = frac >> (T2 - FRAC_BIT_LEN);
+    }
+    else {
+        frac = frac << (FRAC_BIT_LEN - T2);
+    }
+
+    this->sign = sign;
+    this->integer = integer;
+    this->fraction = frac;
 }
 
 template<int INT_BIT_LEN, int FRAC_BIT_LEN>

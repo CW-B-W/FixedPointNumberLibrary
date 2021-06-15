@@ -18,6 +18,10 @@ int main()
     cout << t3.to_double() << endl;
     cout << endl;
 
+    cout << FixedPointNumber<7, 8>(FixedPointNumber<3, 16>(1.2345678)) << endl;
+    cout << FixedPointNumber<3, 16>(FixedPointNumber<7, 8>(1.2345678)) << endl;
+    cout << endl;
+
     FixedPointNumber<3, 16> fp1;
     FixedPointNumber<3, 16> fp2;
 
