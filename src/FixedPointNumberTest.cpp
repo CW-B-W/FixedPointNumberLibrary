@@ -10,10 +10,31 @@ extern void test();
 
 int main()
 {
+    cout << setprecision(10);
+
+    cout << "-----0-----" << endl;
+    FixedPointNumber<15, 16> fp;
+    fp = FixedPointNumber<15, 16>(9999.9999);
+    fp = FixedPointNumber<15, 16>(0x12345678);
+    fp = FixedPointNumber<15, 16>(0x12345678U);
+    fp = FixedPointNumber<15, 16>(FixedPointNumber<7,8>(127.127127));
+    cout << fp << endl;
+    cout << fp.to_double() << endl;
+    cout << fp.get_value() << endl;
+    cout << (-fp).to_double() << endl;
+    cout << (fp+fp).to_double() << endl;
+    cout << (fp*fp).to_double() << endl;
+    cout << "-----0.5-----" << endl;
+    fp = 1.23;
+    FixedPointNumber<7, 8> fph = fp;
+    fph = fp;
+    cout << fph.to_double() << endl;
+
+
+    cout << "-----1-----" << endl;
     FixedPointNumber<3, 16> t1(0xFFF9EU);
     FixedPointNumber<7, 8>  t2(0x0067);
     FixedPointNumber<7, 8>  t3(0x008F);
-    cout << "-----1-----" << endl;
     cout << t1.to_double() << endl;
     cout << t2.to_double() << endl;
     cout << t3.to_double() << endl;

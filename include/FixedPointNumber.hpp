@@ -17,9 +17,11 @@ public:
     inline FixedPointNumber();
     inline FixedPointNumber(uint32_t u32);
     inline FixedPointNumber( int32_t i32);
-    inline explicit FixedPointNumber(double d);
+    inline FixedPointNumber(double d);
     template<int T1, int T2>
-    inline explicit FixedPointNumber(const FixedPointNumber<T1, T2> &that);
+    inline FixedPointNumber(const FixedPointNumber<T1, T2> &that);
+    template<int T1, int T2>
+    inline FixedPointNumber& operator= (const FixedPointNumber<T1, T2> &rhs);
 
     inline uint32_t get_value();
     inline double   to_double();
@@ -31,21 +33,21 @@ public:
     inline FixedPointNumber operator+ (const FixedPointNumber<T1, T2> &rhs) const;
 
     // min/max available positive value
-    static constexpr double PMIN_DOUBLE =  1.0 / (double)(1U << FRAC_BIT_LEN);        //std::pow(2, -FRAC_BIT_LEN);
-    static constexpr double PMAX_DOUBLE =  (double)(1U << INT_BIT_LEN) - PMIN_DOUBLE; //std::pow(2, INT_BIT_LEN) - PMIN_DOUBLE;
+    static constexpr double PMIN_DOUBLE =  1.0 / (double)(1ULL << FRAC_BIT_LEN);        //std::pow(2, -FRAC_BIT_LEN);
+    static constexpr double PMAX_DOUBLE =  (double)(1ULL << INT_BIT_LEN) - PMIN_DOUBLE; //std::pow(2, INT_BIT_LEN) - PMIN_DOUBLE;
     // min/max available negative value
-    static constexpr double NMIN_DOUBLE = -(double)(1U << INT_BIT_LEN);               // -std::pow(2, INT_BIT_LEN);
-    static constexpr double NMAX_DOUBLE = -1.0 / (double)(1U << FRAC_BIT_LEN);        // -std::pow(2, -FRAC_BIT_LEN);
+    static constexpr double NMIN_DOUBLE = -(double)(1ULL << INT_BIT_LEN);               // -std::pow(2, INT_BIT_LEN);
+    static constexpr double NMAX_DOUBLE = -1.0 / (double)(1ULL << FRAC_BIT_LEN);        // -std::pow(2, -FRAC_BIT_LEN);
 
 private:
     // max available positive integer part value
-    static constexpr int32_t PMAX_INTEGER =  (1U << INT_BIT_LEN) - 1U;
+    static constexpr int32_t PMAX_INTEGER   =  (1ULL << INT_BIT_LEN) - 1;
     // min available negative integer part value
-    static constexpr int32_t NMIN_INTEGER = -(1U << INT_BIT_LEN);
+    static constexpr int32_t NMIN_INTEGER   = -(1ULL << INT_BIT_LEN);
 
-    static constexpr uint32_t SIGN_BIT_LEN  = 1U;
+    static constexpr uint32_t SIGN_BIT_LEN  = 1;
     static constexpr uint32_t TOTAL_BIT_LEN = ((SIGN_BIT_LEN)+(INT_BIT_LEN)+(FRAC_BIT_LEN));
-    static constexpr uint32_t MAX_INTEGER   = ((1U << INT_BIT_LEN) - 1U);
+    static constexpr uint32_t MAX_INTEGER   = ((1ULL << INT_BIT_LEN) - 1);
 
     union {
         uint32_t value;
@@ -53,7 +55,7 @@ private:
             uint32_t fraction : FRAC_BIT_LEN;
             uint32_t integer  : INT_BIT_LEN;
             uint32_t sign     : SIGN_BIT_LEN;
-            uint32_t __empty  : (32-TOTAL_BIT_LEN);
+            // uint32_t __empty  : (32-TOTAL_BIT_LEN);
         };
     };
 
@@ -82,16 +84,19 @@ inline std::ostream& operator<<(std::ostream &out, const FixedPointNumber<INT_BI
 #include <cstdint>
 #include <iomanip>
 #include <stdexcept>
+#include <cassert>
 
 template<int INT_BIT_LEN, int FRAC_BIT_LEN>
 FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::FixedPointNumber()
 {
+    assert(this->TOTAL_BIT_LEN <= 32);
     this->value = 0U;
 }
 
 template<int INT_BIT_LEN, int FRAC_BIT_LEN>
 FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::FixedPointNumber(uint32_t u32)
 {
+    assert(this->TOTAL_BIT_LEN <= 32);
     this->value = apply_bitmask(u32);
 }
 
@@ -104,13 +109,14 @@ FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::FixedPointNumber(int32_t i32) : Fix
 template<int INT_BIT_LEN, int FRAC_BIT_LEN>
 FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::FixedPointNumber(double d)
 {
+    assert(this->TOTAL_BIT_LEN <= 32);
     this->value = 0;
     if (d == 0) {
         this->value = 0U;
     }
     else if (d > 0 && d >= this->PMAX_DOUBLE) {
         // set to max available value
-        this->value = (1U << (TOTAL_BIT_LEN-1))-1;
+        this->value = (1ULL << (TOTAL_BIT_LEN-1))-1;
         return;
     }
     else if (d > 0 && d < this->PMIN_DOUBLE) {
@@ -122,29 +128,24 @@ FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::FixedPointNumber(double d)
         return;
     }
     else if (d < 0 && d <= this->NMIN_DOUBLE) {
-        this->value = (1U << (TOTAL_BIT_LEN-1));
+        this->value = (1ULL << (TOTAL_BIT_LEN-1));
         return;
     }
 
     bool sign = d < 0;
     if (sign)
         d = -d;
-    d *= (1U << FRAC_BIT_LEN);
+    d *= (1ULL << FRAC_BIT_LEN);
     this->value = apply_bitmask(d);
     if (sign)
         this->value = apply_bitmask(~this->value+1);
 }
 
 template<int INT_BIT_LEN, int FRAC_BIT_LEN>
-uint32_t  FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::get_value()
-{
-    return apply_bitmask(this->value);
-}
-
-template<int INT_BIT_LEN, int FRAC_BIT_LEN>
 template<int T1, int T2>
 FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::FixedPointNumber(const FixedPointNumber<T1, T2> &that)
 {
+    assert(this->TOTAL_BIT_LEN <= 32);
     this->value = 0;
     uint32_t sign = that.sign;
     
@@ -156,11 +157,11 @@ FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::FixedPointNumber(const FixedPointNu
     }
 
     if (integer > 0 && integer > this->PMAX_INTEGER) {
-        this->value = (1U << (TOTAL_BIT_LEN-1))-1; /* set to max value */
+        this->value = (1ULL << (TOTAL_BIT_LEN-1))-1; /* set to max value */
         return;
     }
     else if (integer < 0 && that.integer < this->NMIN_INTEGER) {
-        this->value = (1U << (TOTAL_BIT_LEN-1));
+        this->value = (1ULL << (TOTAL_BIT_LEN-1));
         return;
     }
 
@@ -173,9 +174,23 @@ FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::FixedPointNumber(const FixedPointNu
     }
 
     this->sign = sign;
-    this->integer = integer & ((1 << INT_BIT_LEN)-1);
+    this->integer = integer & ((1ULL << INT_BIT_LEN)-1);
     this->fraction = frac;
     this->value = apply_bitmask(this->value);
+}
+
+template<int INT_BIT_LEN, int FRAC_BIT_LEN>
+template<int T1, int T2>
+FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>& FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::operator= (const FixedPointNumber<T1, T2> &rhs)
+{
+    *this = FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>(rhs);
+    return *this;
+}
+
+template<int INT_BIT_LEN, int FRAC_BIT_LEN>
+uint32_t  FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::get_value()
+{
+    return apply_bitmask(this->value);
 }
 
 template<int INT_BIT_LEN, int FRAC_BIT_LEN>
@@ -190,7 +205,7 @@ double FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::to_double()
     else {
         d = apply_bitmask(this->value);
     }
-    d /= (double)(1U << FRAC_BIT_LEN);
+    d /= (double)(1ULL << FRAC_BIT_LEN);
 
     return d;
 }
@@ -261,31 +276,31 @@ std::ostream& operator<<(std::ostream &out, const FixedPointNumber<INT_BIT_LEN, 
 template<int INT_BIT_LEN, int FRAC_BIT_LEN>
 uint32_t FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::get_sign_part(uint32_t n)
 {
-    return (n >> (INT_BIT_LEN+FRAC_BIT_LEN)) & ((1 << SIGN_BIT_LEN)-1);
+    return (n >> (INT_BIT_LEN+FRAC_BIT_LEN)) & ((1ULL << SIGN_BIT_LEN)-1);
 }
 
 template<int INT_BIT_LEN, int FRAC_BIT_LEN>
 uint32_t FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::get_integer_part(uint32_t n)
 {
-    return (n >> (FRAC_BIT_LEN)) & ((1 << INT_BIT_LEN)-1);
+    return (n >> (FRAC_BIT_LEN)) & ((1ULL << INT_BIT_LEN)-1);
 }
 
 template<int INT_BIT_LEN, int FRAC_BIT_LEN>
 uint32_t FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::get_fraction_part(uint32_t n)
 {
-    return (n >> (0)) & ((1 << FRAC_BIT_LEN)-1);
+    return (n >> (0)) & ((1ULL << FRAC_BIT_LEN)-1);
 }
 
 template<int INT_BIT_LEN, int FRAC_BIT_LEN>
 uint32_t FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::get_int_frac_part(uint32_t n)
 {
-    return (n >> (0)) & ((1 << (INT_BIT_LEN+FRAC_BIT_LEN))-1);
+    return (n >> (0)) & ((1ULL << (INT_BIT_LEN+FRAC_BIT_LEN))-1);
 }
 
 template<int INT_BIT_LEN, int FRAC_BIT_LEN>
 uint32_t FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::apply_bitmask(uint32_t n)
 {
-    return n & ((1<<TOTAL_BIT_LEN)-1);
+    return n & ((1ULL << TOTAL_BIT_LEN)-1);
 }
 
 #endif
