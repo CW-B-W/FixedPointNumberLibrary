@@ -252,7 +252,9 @@ std::ostream& operator<<(std::ostream &out, const FixedPointNumber<INT_BIT_LEN, 
     u32 |= n.sign    << (INT_BIT_LEN + FRAC_BIT_LEN);
     u32 |= n.integer << (FRAC_BIT_LEN);
     u32 |= n.fraction;
+    std::ios_base::fmtflags f(out.flags());
     out << std::setw((n.TOTAL_BIT_LEN+3)/4) << std::setfill('0') << std::hex << u32;
+    out.flags(f);
     return out;
 }
 
