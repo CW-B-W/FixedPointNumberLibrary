@@ -1,5 +1,11 @@
 # FixedPointNumberLibrary
 Simple header-only library for Fixed-Point Number operations
+### Main files
+* include/FixedPointNumber.hpp
+  * the header-only library of `class FixedPointNumber`
+* src/FixedPointNumberTest.cpp
+  * the demo/test of class `class FixedPointNumber`
+* makefile
 
 ## Usage
 Include library
