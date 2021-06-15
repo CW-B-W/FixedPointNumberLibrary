@@ -12,7 +12,7 @@ DEPS     = src/FixedPointNumberTest.cpp include/FixedPointNumber.hpp
 SRCS     = src/FixedPointNumberTest.cpp
 INCLUDES = -I./include
 
-.PHONY: Test
+.PHONY: test
 test: bin/FixedPointNumberTest.out
 	bin/FixedPointNumberTest.out
 
