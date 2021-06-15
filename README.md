@@ -6,6 +6,10 @@ Include library
 ```C++
 #include "FixedPointNumber.hpp"
 ```
+MUST be compile C++17 or above, e.g.,
+```
+g++ YourCPP.cpp --std=c++17
+```
 
 ### Create a FixedPointNumber object
 * `sign_bit` is always of length 1
