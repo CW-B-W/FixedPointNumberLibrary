@@ -1,12 +1,18 @@
 # FixedPointNumberLibrary
 Simple header-only library for Fixed-Point Number operations
+### Main files
+* include/FixedPointNumber.hpp
+  * the header-only library of `class FixedPointNumber`
+* src/FixedPointNumberTest.cpp
+  * the demo/test of class `class FixedPointNumber`
+* makefile
 
 ## Usage
 Include library
 ```C++
 #include "FixedPointNumber.hpp"
 ```
-MUST be compile C++17 or above, e.g.,
+MUST be compiled with C++17 or above, e.g.,
 ```
 g++ YourCPP.cpp --std=c++17
 ```
@@ -43,6 +49,13 @@ FixedPointNumber<3, 16> fp(3.14159265359);
 cout << setprecision(10) << fp.to_double() << endl;
 // output:
 // 3.141586304
+```
+* get_value
+```C++
+FixedPointNumber<7, 8> fp(0x1234);
+cout << "0x" << hex << fp.get_value() << endl;
+// output:
+// 0x1234
 ```
 * operator- (negative)
 ```C++
