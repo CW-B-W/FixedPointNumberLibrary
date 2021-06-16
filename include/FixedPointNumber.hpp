@@ -30,6 +30,8 @@ public:
     template<int T1, int T2>
     inline FixedPointNumber operator* (const FixedPointNumber<T1, T2> &rhs) const;
     template<int T1, int T2>
+    inline FixedPointNumber operator- (const FixedPointNumber<T1, T2> &rhs) const;
+    template<int T1, int T2>
     inline FixedPointNumber operator+ (const FixedPointNumber<T1, T2> &rhs) const;
 
     // min/max available positive value
@@ -256,6 +258,14 @@ FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN> FixedPointNumber<INT_BIT_LEN, FRAC_B
     FixedPointNumber &lhs = *const_cast<FixedPointNumber*>(this);
     FixedPointNumber  rhs = FixedPointNumber(_rhs);
     return FixedPointNumber(apply_bitmask(lhs.value + rhs.value));
+}
+
+template<int INT_BIT_LEN, int FRAC_BIT_LEN>
+template<int T1, int T2>
+FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN> FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::operator- (const FixedPointNumber<T1, T2> &rhs) const
+{
+    FixedPointNumber &lhs = *const_cast<FixedPointNumber*>(this);
+    return lhs + (-rhs);
 }
 
 template<int INT_BIT_LEN, int FRAC_BIT_LEN>

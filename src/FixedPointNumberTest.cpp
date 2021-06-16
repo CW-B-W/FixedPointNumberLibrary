@@ -89,6 +89,7 @@ int main()
     cout << (-fp1).to_double() << endl;
     cout << (-fp2).to_double() << endl;
     cout << (fp1+fp2).to_double() << endl;
+    cout << (fp1-fp2).to_double() << endl;
     cout << (fp1*fp2).to_double() << endl;
     cout << endl;
 
@@ -101,6 +102,7 @@ int main()
     cout << (-fp1).to_double() << endl;
     cout << (-fp2).to_double() << endl;
     cout << (fp1+fp2).to_double() << endl;
+    cout << (fp1-fp2).to_double() << endl;
     cout << (fp1*fp2).to_double() << endl;
     cout << endl;
 
@@ -113,6 +115,7 @@ int main()
     cout << (-fp1).to_double() << endl;
     cout << (-fp2).to_double() << endl;
     cout << (fp1+fp2).to_double() << endl;
+    cout << (fp1-fp2).to_double() << endl;
     cout << (fp1*fp2).to_double() << endl;
     cout << endl;
 
@@ -125,6 +128,7 @@ int main()
     cout << (-fp1).to_double() << endl;
     cout << (-fp2).to_double() << endl;
     cout << (fp1+fp2).to_double() << endl;
+    cout << (fp1-fp2).to_double() << endl;
     cout << (fp1*fp2).to_double() << endl;
     cout << endl;
 
@@ -142,6 +146,7 @@ int main()
     cout << (-fp3).to_double() << endl;
     cout << (-fp4).to_double() << endl;
     cout << (fp3+fp4).to_double() << endl;
+    cout << (fp3-fp4).to_double() << endl;
     cout << (fp3*fp4).to_double() << endl;
     cout << endl;
 
@@ -154,6 +159,7 @@ int main()
     cout << (-fp3).to_double() << endl;
     cout << (-fp4).to_double() << endl;
     cout << (fp3+fp4).to_double() << endl;
+    cout << (fp3-fp4).to_double() << endl;
     cout << (fp3*fp4).to_double() << endl;
     cout << endl;
 
@@ -166,6 +172,7 @@ int main()
     cout << (-fp3).to_double() << endl;
     cout << (-fp4).to_double() << endl;
     cout << (fp3+fp4).to_double() << endl;
+    cout << (fp3-fp4).to_double() << endl;
     cout << (fp3*fp4).to_double() << endl;
     cout << endl;
 
@@ -178,6 +185,7 @@ int main()
     cout << (-fp3).to_double() << endl;
     cout << (-fp4).to_double() << endl;
     cout << (fp3+fp4).to_double() << endl;
+    cout << (fp3-fp4).to_double() << endl;
     cout << (fp3*fp4).to_double() << endl;
     cout << endl;
     
