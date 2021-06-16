@@ -23,8 +23,8 @@ public:
     template<int T1, int T2>
     inline FixedPointNumber& operator= (const FixedPointNumber<T1, T2> &rhs);
 
-    inline uint32_t get_value();
-    inline double   to_double();
+    inline uint32_t get_value() const;
+    inline double   to_double() const;
 
     inline FixedPointNumber operator- () const;
     template<int T1, int T2>
@@ -190,15 +190,15 @@ FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>& FixedPointNumber<INT_BIT_LEN, FRAC_
 }
 
 template<int INT_BIT_LEN, int FRAC_BIT_LEN>
-uint32_t  FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::get_value()
+uint32_t  FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::get_value() const
 {
     return apply_bitmask(this->value);
 }
 
 template<int INT_BIT_LEN, int FRAC_BIT_LEN>
-double FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::to_double()
+double FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::to_double() const
 {
-    FixedPointNumber &n = *this;
+    FixedPointNumber &n = *const_cast<FixedPointNumber*>(this);
     double d = 0;
     if (n.sign) {
         d = apply_bitmask(~this->value+1);
