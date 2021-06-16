@@ -8,7 +8,7 @@ help:
 	@printf '\tclean\t\tclean compiled files\n'
 
 CC        = g++
-CXXFLAGS  = -Wall -O0 --std=c++17
+CXXFLAGS  = -Wall -O3 --std=c++17
 TEST_DEPS = src/FixedPointNumberTest.cpp include/FixedPointNumber.hpp
 TEST_SRCS = src/FixedPointNumberTest.cpp
 DEMO_DEPS = src/FixedPointNumberDemo.cpp include/FixedPointNumber.hpp
