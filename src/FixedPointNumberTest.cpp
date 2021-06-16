@@ -24,11 +24,19 @@ int main()
     cout << (-fp).to_double() << endl;
     cout << (fp+fp).to_double() << endl;
     cout << (fp*fp).to_double() << endl;
-    cout << "-----0.5-----" << endl;
+    cout << "-----0.1-----" << endl;
     fp = 1.23;
     FixedPointNumber<7, 8> fph = fp;
     fph = fp;
     cout << fph.to_double() << endl;
+    cout << "-----0.2-----" << endl;
+    FixedPointNumber<7, 8> fpm1 = 0x10FF;
+    FixedPointNumber<15, 16> fpm2 = 0x0000FFFF;
+    cout << fpm1.to_double() << " * " << fpm2.to_double() << endl;
+    cout << (fpm1 * fpm2).to_double() << endl;
+    cout << fpm2.to_double() << " * " << fpm1.to_double() << endl;
+    cout << (fpm2 * fpm1).to_double() << endl;
+    cout << endl;
 
 
     cout << "-----1-----" << endl;

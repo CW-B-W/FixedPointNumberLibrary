@@ -223,10 +223,9 @@ FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN> FixedPointNumber<INT_BIT_LEN, FRAC_B
 
 template<int INT_BIT_LEN, int FRAC_BIT_LEN>
 template<int T1, int T2>
-FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN> FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::operator* (const FixedPointNumber<T1, T2> &_rhs) const
+FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN> FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::operator* (const FixedPointNumber<T1, T2> &rhs) const
 {
     FixedPointNumber &lhs = *const_cast<FixedPointNumber*>(this);
-    FixedPointNumber  rhs = FixedPointNumber(_rhs);
     uint8_t  sign = lhs.sign ^ rhs.sign;
     uint64_t lv;
     uint64_t rv;
@@ -242,7 +241,7 @@ FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN> FixedPointNumber<INT_BIT_LEN, FRAC_B
     else {
         rv = rhs.value;
     }
-    uint32_t product = get_int_frac_part((lv * rv) >> (FRAC_BIT_LEN));
+    uint32_t product = get_int_frac_part((lv * rv) >> (T2));
     FixedPointNumber res(product);
     if (sign)
         return -res;
