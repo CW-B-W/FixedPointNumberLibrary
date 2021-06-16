@@ -4,7 +4,9 @@ Simple header-only library for Fixed-Point Number operations
 * include/FixedPointNumber.hpp
   * the header-only library of `class FixedPointNumber`
 * src/FixedPointNumberTest.cpp
-  * the demo/test of class `class FixedPointNumber`
+  * the test of `class FixedPointNumber`
+* src/FixedPointNumberDemo.cpp
+  * the demo of `class FixedPointNumber`
 * makefile
 
 ## Usage
