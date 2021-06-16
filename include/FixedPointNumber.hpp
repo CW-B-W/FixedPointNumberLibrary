@@ -114,7 +114,7 @@ FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::FixedPointNumber(double d)
     assert(this->TOTAL_BIT_LEN <= 32);
     this->value = 0;
     if (d == 0) {
-        this->value = 0U;
+        this->value = 0;
     }
     else if (d > 0 && d >= this->PMAX_DOUBLE) {
         // set to max available value
@@ -218,6 +218,10 @@ FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN> FixedPointNumber<INT_BIT_LEN, FRAC_B
 {
     FixedPointNumber fp;
     uint32_t n = get_int_frac_part(this->value);
+    if (n == 0) {
+        fp.value = 0;
+        return fp;
+    }
     fp.value = get_int_frac_part(~n+1);
     fp.sign = !this->sign;
     return fp;
