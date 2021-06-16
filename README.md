@@ -24,7 +24,10 @@ g++ YourCPP.cpp --std=c++17
 * `int_bits` is the length of integer part bits
 * `frac_bits` is the length of fraction part bits
 
-The below example instantiates a `FixedPointNumber` which has 1bit sign-bit, Xbits int-bit, Ybits frac-bit
+The below example instantiates a `FixedPointNumber` which has  
+* 1bit `sign-bit`
+* Xbits `int-bit`
+* Ybits `frac-bit`
 
 ```C++
 FixedPointNumber<X, Y> fp(...);
