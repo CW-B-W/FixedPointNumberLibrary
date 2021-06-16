@@ -24,7 +24,7 @@ bin/FixedPointNumberTest.out: $(TEST_DEPS)
 
 .PHONY: demo
 demo: bin/FixedPointNumberDemo.out
-	bin/FixedPointNumberDemo.out
+	bin/FixedPointNumberDemo.out data/
 
 bin/FixedPointNumberDemo.out: $(DEMO_DEPS)
 	$(CC) -o $@ $(DEMO_SRCS) $(INCLUDES) $(CXXFLAGS)
