@@ -109,6 +109,9 @@ public:
         cout << "[Print info]" << endl;
         cout << "\tdouble = " << FixedPointNumber<T1, T2>::to_double() << endl;
         cout << "\tvalue  = " << static_cast<FixedPointNumber<T1,T2>>(*this) << endl;
+        cout << "\tstatus = " << endl;
+        cout << "\t\toverflow =  " << static_cast<FixedPointNumber<T1,T2>>(*this).is_overflowed() << endl;
+        cout << "\t\tunderflowflow =  " << static_cast<FixedPointNumber<T1,T2>>(*this).is_underflowed() << endl;
         cout << endl;
     }
 };
@@ -127,17 +130,6 @@ void print_title(string s, int lvl)
 
 int main()
 {
-    print_title("Custom test", 0);
-    FixedPointNumberTest<15, 16>  x = 0.0078125;
-    FixedPointNumberTest<15, 16>  h = -0.000427246;
-    x.print_double();
-    h.print_double();
-    (x*h).print_info();
-    (x).print_info();
-    (-h).print_info();
-    ((x)*(-h)).print_info();
-    print_title("End of Custom test", 0);
-
     print_title("Test 0 - Basic operations", 0);
 
     print_title("Test constructors", 1);
@@ -193,6 +185,27 @@ int main()
     fpof.print_value();
 
     print_title("End of Test 2", 0);
+    cout << endl;
+
+    print_title("Test 3 - Add Overflow test", 0);
+    FixedPointNumberTest<3, 12> fp_pmaxd = FixedPointNumberTest<3, 12>::PMAX_DOUBLE;
+    FixedPointNumberTest<3, 12> fp_pmind = FixedPointNumberTest<3, 12>::PMIN_DOUBLE;
+    fp_pmaxd.print_info();
+    (fp_pmaxd + fp_pmind).print_info();
+    FixedPointNumberTest<3, 12> fp_nmind = FixedPointNumberTest<3, 12>::NMIN_DOUBLE;
+    FixedPointNumberTest<3, 12> fp_nmaxd = FixedPointNumberTest<3, 12>::NMAX_DOUBLE;
+    fp_nmind.print_info();
+    (fp_nmind + fp_nmaxd).print_info();
+
+
+    print_title("End of Test 3", 0);
+    cout << endl;
+
+    print_title("Test 4 - Mul Overflow test", 0);
+    
+    
+
+    print_title("End of Test 4", 0);
     cout << endl;
 
     // cout << "-----3-----" << endl;
