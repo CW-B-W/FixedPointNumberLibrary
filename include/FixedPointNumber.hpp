@@ -173,6 +173,7 @@ FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::FixedPointNumber(const FixedPointNu
     
     uint32_t frac = that.get_fraction_part(that.value);
     if (T2 > FRAC_BIT_LEN) {
+        /* round from the truncated bits */
         frac = frac >> (T2 - FRAC_BIT_LEN - 1);
         frac += frac & 1;
         frac >>= 1;
