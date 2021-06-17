@@ -66,6 +66,7 @@ private:
     inline static uint32_t get_fraction_part(uint32_t n);
     inline static uint32_t get_int_frac_part(uint32_t n);
     inline static uint32_t apply_bitmask(uint32_t n);
+    inline static uint32_t sign_extend(uint32_t n);
 };
 
 template<int INT_BIT_LEN, int FRAC_BIT_LEN>
@@ -169,7 +170,9 @@ FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::FixedPointNumber(const FixedPointNu
 
     uint32_t frac = that.get_fraction_part(that.value);
     if (T2 > FRAC_BIT_LEN) {
-        frac = frac >> (T2 - FRAC_BIT_LEN);
+        frac = frac >> (T2 - FRAC_BIT_LEN - 1);
+        frac += frac & 1;
+        frac >>= 1;
     }
     else {
         frac = frac << (FRAC_BIT_LEN - T2);
