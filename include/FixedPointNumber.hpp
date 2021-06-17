@@ -161,31 +161,18 @@ FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::FixedPointNumber(double d)
 
 template<int INT_BIT_LEN, int FRAC_BIT_LEN>
 template<int T1, int T2>
-FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::FixedPointNumber(const FixedPointNumber<T1, T2> &that)
+FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::FixedPointNumber(const FixedPointNumber<T1, T2> &_that)
 {
     assert(this->TOTAL_BIT_LEN <= (sizeof(this->value) * 8));
     this->value = 0;
+
+    FixedPointNumber<T1, T2> that = _that;
     uint32_t sign = that.sign;
+    if (sign)
+        that = -that;
     
-    int32_t integer = that.get_integer_part(that.value);
-    // sign extension
-    if (sign) {
-        uint32_t bitmask = ~((((uint32_t)1) << T1)-1);
-        integer |= bitmask;
-    }
-
-    if (integer > 0 && integer > this->PMAX_INTEGER) {
-        this->value = (1ULL << (TOTAL_BIT_LEN-1))-1; /* set to max value */
-        return;
-    }
-    else if (integer < 0 && that.integer < this->NMIN_INTEGER) {
-        this->value = (1ULL << (TOTAL_BIT_LEN-1));
-        return;
-    }
-
     uint32_t frac = that.get_fraction_part(that.value);
     if (T2 > FRAC_BIT_LEN) {
-        #warning "This is a wrong implementation"
         frac = frac >> (T2 - FRAC_BIT_LEN - 1);
         frac += frac & 1;
         frac >>= 1;
@@ -194,10 +181,14 @@ FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::FixedPointNumber(const FixedPointNu
         frac = frac << (FRAC_BIT_LEN - T2);
     }
 
-    this->sign = sign;
-    this->integer = integer & ((1ULL << INT_BIT_LEN)-1);
-    this->fraction = frac;
-    this->value = apply_bitmask(this->value);
+    uint32_t integer = that.get_integer_part(that.value);
+
+    this->sign = 0;
+    this->integer = integer & make_bitmask(INT_BIT_LEN);
+    this->fraction = frac & make_bitmask(FRAC_BIT_LEN);
+    
+    if (sign)
+        *this = -(*this);
 }
 
 template<int INT_BIT_LEN, int FRAC_BIT_LEN>
