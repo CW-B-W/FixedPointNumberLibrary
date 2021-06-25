@@ -201,16 +201,52 @@ uint32_t  FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::get_value() const
 template<int INT_BIT_LEN, int FRAC_BIT_LEN>
 double FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::to_double() const
 {
-    const FixedPointNumber &n = *this;
-    double d = 0;
-    if (n.sign) {
-        d = apply_bitmask(~this->value+1);
-        d = -d;
-    }
-    else {
-        d = apply_bitmask(this->value);
-    }
-    d /= (double)(1ULL << FRAC_BIT_LEN);
+    // Old implementation based on double add/mul can be found at
+    // https://github.com/CW-B-W/FixedPointNumberLibrary/blob/2b0d6fe66d809c9f2d60a4e15a276f6ce5fa993c/include/FixedPointNumber.hpp
+
+    if (this->value == 0)
+        return 0;
+    
+    uint64_t sign = this->sign;
+    uint64_t value = this->value;
+    if (sign)
+        value = apply_bitmask(~value + 1);
+
+    union {
+        struct {
+            uint64_t d_frac : 52;
+            uint64_t d_exp  : 11;
+            uint64_t d_sign : 1;
+        };
+        double d = 0;
+    };
+
+    /*
+     *  Because the formula of double is
+     *  d = (-1)^d_sign * (1.d_frac) * 2^d_exp
+     *  we can convert fixed point number to double with bit operations:
+     *  Let the fixed point number to positive
+     *  observe in the formula that `(1.d_frac)` always has a `1`
+     *  so d must be 2^(d_exp) + ...
+     *  which means 2^(d_exp) must match the MSB of fixed-point number
+     *  so we simply make 2^d_exp be the MSB
+     *  then the bits behind MSB is the fraction part of d
+     */
+
+    // find msb
+    uint64_t msb = value;
+    while (msb & (msb-1))
+        msb &= msb - 1;
+    
+    // let 2^d_exp = MSB
+    int64_t exp = __builtin_ctzll(msb) - FRAC_BIT_LEN;
+    d_exp = exp + 1023;
+
+    // the fraction part is behind msb
+    uint64_t frac = value & ~msb;
+    d_frac = frac << (52 - __builtin_ctzll(msb));
+
+    d_sign = sign;
 
     return d;
 }
