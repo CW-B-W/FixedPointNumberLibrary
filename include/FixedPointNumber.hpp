@@ -289,7 +289,9 @@ FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN> FixedPointNumber<INT_BIT_LEN, FRAC_B
 
     FixedPointNumber res;
     uint64_t product = lv * rv;
-    product >>= T2;
+    product >>= (T2 - 1);
+    product += product & 1; // rounding
+    product >>= 1;
     if (product >= (1 << (TOTAL_BIT_LEN-1)))
         res.overflowed = 1;
     res.value = get_int_frac_part(product);
