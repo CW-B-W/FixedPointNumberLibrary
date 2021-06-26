@@ -1,5 +1,8 @@
 # FixedPointNumberLibrary
 Simple header-only library for Fixed-Point Number operations
+
+[C version here](https://github.com/CW-B-W/FixedPointNumberLibrary/tree/master/c), designed to be compact
+
 ### Main files
 * include/FixedPointNumber.hpp
   * the header-only library of `class FixedPointNumber`
