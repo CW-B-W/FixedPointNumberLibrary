@@ -2,6 +2,8 @@
 #define __FIXED32_H__
 
 #include <stdint.h>
+#include <stdbool.h>
+#include <assert.h>
 
 typedef uint32_t fixed32;
 
@@ -31,19 +33,22 @@ static inline uint32_t fixed32_apply_bitmask(uint32_t f)
     return f & (((uint64_t)1 << FIXED32_TOTAL_BITS) - 1);
 }
 
-static inline uint32_t fixed32_sign(fixed32 f)
+// return whether (f < 0)
+static inline bool fixed32_sign(fixed32 f)
 {
     return (f >> (FIXED32_INT_BITS + FIXED32_FRAC_BITS)) & 1;
 }
 
+// return the -f
 static inline fixed32 fixed32_neg(fixed32 f)
 {
     return fixed32_apply_bitmask(~f + 1);
 }
 
+// return abs(f)
 static inline fixed32 fixed32_abs(fixed32 f)
 {
-    uint32_t f_sign = fixed32_sign(f);
+    bool f_sign = fixed32_sign(f);
     if (f_sign) {
         f = fixed32_neg(f);
     }
@@ -64,16 +69,33 @@ fixed32 fixed32_mul(fixed32 a, fixed32 b)
 
     fixed32 result = product >> FIXED32_FRAC_BITS;
 
-    uint32_t a_sign = fixed32_sign(a);
-    uint32_t b_sign = fixed32_sign(b);
+    bool a_sign = fixed32_sign(a);
+    bool b_sign = fixed32_sign(b);
     if (a_sign ^ b_sign) {
         result = fixed32_apply_bitmask(~result + 1);
     }
     return result;
 }
 
-// static inline uint32_t fixed32_gt(fixed32 a, fixed32 b); // is a greater than b?
-// static inline uint32_t fixed32_ge(fixed32 a, fixed32 b); // is a greater than or equal to b?
+// return a < b
+bool fixed32_gt(fixed32 a, fixed32 b)
+{
+    bool a_sign = fixed32_sign(a);
+    bool b_sign = fixed32_sign(b);
+    if (a_sign != b_sign) // either a or b is negative
+        return a_sign;
+    else if (a_sign == 0) // both positive
+        return a < b;
+    else                  // both negative
+        return a > b;
+    assert(0);
+}
+
+// return a <= b
+bool fixed32_ge(fixed32 a, fixed32 b)
+{
+    return a == b ? 1 : fixed32_gt(a, b);
+}
 
 fixed32 fixed32_fromfloat(float _f)
 {
@@ -108,7 +130,7 @@ float fixed32_tofloat(fixed32 f)
 
     float_parse f_parse = (float_parse){.f = 0.0f};
 
-    uint32_t sign = fixed32_sign(f);
+    bool sign = fixed32_sign(f);
     f = fixed32_abs(f);
 
     uint32_t msb = f;
