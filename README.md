@@ -1,5 +1,5 @@
 # FixedPointNumberLibrary
-Simple header-only library for Fixed-Point Number operations
+Simple C++ header-only library for Fixed-Point Number operations
 
 [C version here](https://github.com/CW-B-W/FixedPointNumberLibrary/tree/master/c), designed to be compact
 
