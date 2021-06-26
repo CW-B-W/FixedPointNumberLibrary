@@ -77,7 +77,7 @@ fixed32 fixed32_mul(fixed32 a, fixed32 b)
     return result;
 }
 
-// return a < b
+// return a > b
 bool fixed32_gt(fixed32 a, fixed32 b)
 {
     bool a_sign = fixed32_sign(a);
@@ -91,7 +91,7 @@ bool fixed32_gt(fixed32 a, fixed32 b)
     assert(0);
 }
 
-// return a <= b
+// return a >= b
 bool fixed32_ge(fixed32 a, fixed32 b)
 {
     return a == b ? 1 : fixed32_gt(a, b);
