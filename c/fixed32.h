@@ -60,7 +60,7 @@ static inline fixed32 fixed32_add(fixed32 a, fixed32 b)
     return a + b;
 }
 
-fixed32 fixed32_mul(fixed32 a, fixed32 b)
+static inline fixed32 fixed32_mul(fixed32 a, fixed32 b)
 {
     uint32_t a_abs = fixed32_abs(a);
     uint32_t b_abs = fixed32_abs(b);
@@ -78,7 +78,7 @@ fixed32 fixed32_mul(fixed32 a, fixed32 b)
 }
 
 // return a > b
-bool fixed32_gt(fixed32 a, fixed32 b)
+static inline bool fixed32_gt(fixed32 a, fixed32 b)
 {
     bool a_sign = fixed32_sign(a);
     bool b_sign = fixed32_sign(b);
@@ -92,12 +92,12 @@ bool fixed32_gt(fixed32 a, fixed32 b)
 }
 
 // return a >= b
-bool fixed32_ge(fixed32 a, fixed32 b)
+static inline bool fixed32_ge(fixed32 a, fixed32 b)
 {
     return a == b ? 1 : fixed32_gt(a, b);
 }
 
-fixed32 fixed32_fromfloat(float _f)
+static inline fixed32 fixed32_fromfloat(float _f)
 {
     float_parse f_parse = (float_parse){.f = _f};
     
@@ -123,7 +123,7 @@ fixed32 fixed32_fromfloat(float _f)
     return fixed;
 }
 
-float fixed32_tofloat(fixed32 f)
+static inline float fixed32_tofloat(fixed32 f)
 {
     if (f == 0)
         return 0.0f;
