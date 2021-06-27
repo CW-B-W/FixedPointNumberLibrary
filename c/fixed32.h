@@ -48,11 +48,7 @@ static inline fixed32 fixed32_neg(fixed32 f)
 // return abs(f)
 static inline fixed32 fixed32_abs(fixed32 f)
 {
-    bool f_sign = fixed32_sign(f);
-    if (f_sign) {
-        f = fixed32_neg(f);
-    }
-    return f;
+    return fixed32_sign(f) ? fixed32_neg(f) : f;
 }
 
 static inline fixed32 fixed32_add(fixed32 a, fixed32 b)
@@ -91,10 +87,30 @@ static inline bool fixed32_gt(fixed32 a, fixed32 b)
     assert(0);
 }
 
+static inline bool fixed32_eq(fixed32 a, fixed32 b)
+{
+    return a == b;
+}
+
 // return a >= b
 static inline bool fixed32_ge(fixed32 a, fixed32 b)
 {
-    return a == b ? 1 : fixed32_gt(a, b);
+    return fixed32_eq(a, b) || fixed32_gt(a, b);
+}
+
+static inline bool fixed32_lt(fixed32 a, fixed32 b)
+{
+    return !fixed32_ge(a, b);
+}
+
+static inline bool fixed32_le(fixed32 a, fixed32 b)
+{
+    return !fixed32_gt(a, b);
+}
+
+static inline bool fixed32_ne(fixed32 a, fixed32 b)
+{
+    return !fixed32_eq(a, b);
 }
 
 static inline fixed32 fixed32_fromfloat(float _f)
