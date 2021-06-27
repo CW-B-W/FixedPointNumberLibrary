@@ -81,9 +81,9 @@ static inline bool fixed32_gt(fixed32 a, fixed32 b)
     if (a_sign != b_sign) // either a or b is negative
         return a_sign;
     else if (a_sign == 0) // both positive
-        return a < b;
-    else                  // both negative
         return a > b;
+    else                  // both negative
+        return a < b;
     assert(0);
 }
 
