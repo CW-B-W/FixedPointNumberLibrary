@@ -9,7 +9,7 @@ Simple C++ header-only library for Fixed-Point Number operations
 * src/FixedPointNumberTest.cpp
   * the test of `class FixedPointNumber`
 * src/FixedPointNumberDemo.cpp
-  * the demo of `class FixedPointNumber`
+  * the demo of 1D-convolution using `class FixedPointNumber`
 * makefile
 
 ## Usage
@@ -23,9 +23,9 @@ g++ YourCPP.cpp --std=c++17
 ```
 
 ### Create a FixedPointNumber object
-* `sign_bit` is always of length 1
-* `int_bits` is the length of integer part bits
-* `frac_bits` is the length of fraction part bits
+* `sign_bit` is always of width 1
+* `int_bits` is the width of integer part bits
+* `frac_bits` is the width of fraction part bits
 
 The below example instantiates a `FixedPointNumber` which has  
 * 1bit `sign-bit`
