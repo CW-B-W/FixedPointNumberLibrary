@@ -10,6 +10,7 @@ Simple C++ header-only library for Fixed-Point Number operations
   * the test of `class FixedPointNumber`
 * src/FixedPointNumberDemo.cpp
   * the demo of 1D-convolution using `class FixedPointNumber`
+  * more examples can be found in [CW-B-W/DIC-Frequency_Analysis_System/cpp_verification](https://github.com/CW-B-W/DIC-Frequency_Analysis_System/tree/master/cpp_verification)
 * makefile
 
 ## Usage
