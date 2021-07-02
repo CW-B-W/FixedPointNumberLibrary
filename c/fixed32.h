@@ -53,7 +53,7 @@ static inline fixed32 fixed32_abs(fixed32 f)
 
 static inline fixed32 fixed32_add(fixed32 a, fixed32 b)
 {
-    return a + b;
+    return fixed32_apply_bitmask(a + b);
 }
 
 static inline fixed32 fixed32_mul(fixed32 a, fixed32 b)
@@ -63,12 +63,12 @@ static inline fixed32 fixed32_mul(fixed32 a, fixed32 b)
 
     uint64_t product = (uint64_t) a_abs * b_abs;
 
-    fixed32 result = product >> FIXED32_FRAC_BITS;
+    fixed32 result = fixed32_apply_bitmask(product >> FIXED32_FRAC_BITS);
 
     bool a_sign = fixed32_sign(a);
     bool b_sign = fixed32_sign(b);
     if (a_sign ^ b_sign) {
-        result = fixed32_apply_bitmask(~result + 1);
+        result = fixed32_neg(result);
     }
     return result;
 }
@@ -137,6 +137,8 @@ static inline fixed32 fixed32_fromfloat(float _f)
         fixed >>= (-exp);
     }
 
+    fixed = fixed32_apply_bitmask(fixed);
+
     if (f_parse.sign) {
         fixed = fixed32_neg(fixed);
     }
@@ -158,8 +160,9 @@ static inline fixed32 fixed32_fromfloat_fp(float _f)
     _f *= (1ULL << FIXED32_FRAC_BITS);
     fixed = _f;
 
+    fixed = fixed32_apply_bitmask(fixed);
     if (sign)
-        fixed = fixed32_apply_bitmask(~fixed+1);
+        fixed = fixed32_neg(fixed);
 
     return fixed;
 }
