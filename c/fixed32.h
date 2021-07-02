@@ -139,6 +139,10 @@ static inline fixed32 fixed32_fromfloat(float _f)
     return fixed;
 }
 
+/*
+ * Using bitwise operation to implement `tofloat`.
+ * This is for devices without FPU
+ */
 static inline float fixed32_tofloat(fixed32 f)
 {
     if (f == 0)
@@ -168,6 +172,27 @@ static inline float fixed32_tofloat(fixed32 f)
     f_parse.sign = sign;
 
     return f_parse.f;
+}
+
+/*
+ * Using floating-point operation to implement `tofloat`.
+ * This is for devices with FPU
+ */
+static inline float fixed32_tofloat_fp(fixed32 f)
+{
+    float ff = 0.0f;
+
+    if (fixed32_sign(f)) {
+        ff = fixed32_apply_bitmask(~f+1);
+        ff = -ff;
+    }
+    else {
+        ff = fixed32_apply_bitmask(f);
+    }
+
+    ff /= (float)(1ULL << FIXED32_FRAC_BITS);
+
+    return ff;
 }
 
 #endif
