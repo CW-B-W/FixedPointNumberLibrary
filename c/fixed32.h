@@ -113,6 +113,10 @@ static inline bool fixed32_ne(fixed32 a, fixed32 b)
     return !fixed32_eq(a, b);
 }
 
+/*
+ * Using bitwise operation to implement `fromfloat`.
+ * This is for devices without FPU
+ */
 static inline fixed32 fixed32_fromfloat(float _f)
 {
     float_parse f_parse = (float_parse){.f = _f};
@@ -136,6 +140,27 @@ static inline fixed32 fixed32_fromfloat(float _f)
     if (f_parse.sign) {
         fixed = fixed32_neg(fixed);
     }
+    return fixed;
+}
+
+/*
+ * Using floating-point operation to implement `fromfloat`.
+ * This is for devices with FPU
+ */
+static inline fixed32 fixed32_fromfloat_fp(float _f)
+{
+    fixed32 fixed = 0;
+    
+    bool sign = _f < 0;
+    if (sign)
+        _f = -_f;
+
+    _f *= (1ULL << FIXED32_FRAC_BITS);
+    fixed = _f;
+
+    if (sign)
+        fixed = fixed32_apply_bitmask(~fixed+1);
+
     return fixed;
 }
 
