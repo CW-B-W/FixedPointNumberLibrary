@@ -23,8 +23,9 @@ public:
     template<int T1, int T2>
     inline FixedPointNumber(const FixedPointNumber<T1, T2> &that);
 
-    inline uint32_t get_value() const;
-    inline double   to_double() const;
+    inline uint32_t get_value()         const;
+    inline double   to_double()         const; // use floating-point operations to convert to double
+    inline double   to_double_bitwise() const; // use bitwise        operation to convert to double
 
     inline FixedPointNumber operator- () const;
     template<int T1, int T2>
@@ -201,9 +202,22 @@ uint32_t  FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::get_value() const
 template<int INT_BIT_LEN, int FRAC_BIT_LEN>
 double FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::to_double() const
 {
-    // Old implementation based on double add/mul can be found at
-    // https://github.com/CW-B-W/FixedPointNumberLibrary/blob/2b0d6fe66d809c9f2d60a4e15a276f6ce5fa993c/include/FixedPointNumber.hpp
+    const FixedPointNumber &n = *this;
+    double d = 0;
+    if (n.sign) {
+        d = apply_bitmask(~this->value+1);
+        d = -d;
+    }
+    else {
+        d = apply_bitmask(this->value);
+    }
+    d /= (double)(1ULL << FRAC_BIT_LEN);
+    return d;
+}
 
+template<int INT_BIT_LEN, int FRAC_BIT_LEN>
+double FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::to_double_bitwise() const
+{
     if (this->value == 0)
         return 0;
     
@@ -250,7 +264,6 @@ double FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::to_double() const
 
     return d;
 }
-
 
 template<int INT_BIT_LEN, int FRAC_BIT_LEN>
 FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN> FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::operator- () const
