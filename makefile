@@ -20,6 +20,7 @@ test: bin/FixedPointNumberTest.out
 	bin/FixedPointNumberTest.out
 
 bin/FixedPointNumberTest.out: $(TEST_DEPS)
+	mkdir -p bin
 	$(CC) -o $@ $(TEST_SRCS) $(INCLUDES) $(CXXFLAGS)
 
 .PHONY: demo
@@ -27,6 +28,7 @@ demo: bin/FixedPointNumberDemo.out
 	bin/FixedPointNumberDemo.out data/
 
 bin/FixedPointNumberDemo.out: $(DEMO_DEPS)
+	mkdir -p bin
 	$(CC) -o $@ $(DEMO_SRCS) $(INCLUDES) $(CXXFLAGS)
 
 .PHONY: clean
