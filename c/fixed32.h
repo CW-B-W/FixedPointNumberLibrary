@@ -127,9 +127,9 @@ static inline fixed32 fixed32_fromfloat(float _f)
     uint32_t frac = f_parse.frac;
 
     if (FIXED32_FRAC_BITS >= 23)
-        fixed = (1 << FIXED32_FRAC_BITS) | (frac << (FIXED32_FRAC_BITS - 23));
+        fixed = ((uint64_t)1 << FIXED32_FRAC_BITS) | (frac << (FIXED32_FRAC_BITS - 23));
     else
-        fixed = (1 << FIXED32_FRAC_BITS) | (frac >> (23 - FIXED32_FRAC_BITS));
+        fixed = ((uint64_t)1 << FIXED32_FRAC_BITS) | (frac >> (23 - FIXED32_FRAC_BITS));
     if (exp >= 0) {
         fixed <<= exp;
     }
@@ -157,7 +157,7 @@ static inline fixed32 fixed32_fromfloat_fp(float _f)
     if (sign)
         _f = -_f;
 
-    _f *= (1ULL << FIXED32_FRAC_BITS);
+    _f *= ((uint64_t)1 << FIXED32_FRAC_BITS);
     fixed = _f;
 
     fixed = fixed32_apply_bitmask(fixed);
@@ -218,7 +218,7 @@ static inline float fixed32_tofloat_fp(fixed32 f)
         ff = fixed32_apply_bitmask(f);
     }
 
-    ff /= (float)(1ULL << FIXED32_FRAC_BITS);
+    ff /= (float)((uint64_t)1 << FIXED32_FRAC_BITS);
 
     return ff;
 }
