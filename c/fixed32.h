@@ -2,6 +2,7 @@
 #define __FIXED32_H__
 
 #include <stdint.h>
+#include <limits.h>
 #include <stdbool.h>
 #include <assert.h>
 
@@ -159,7 +160,13 @@ static inline fixed32 fixed32_fromfloat_fp(float _f)
     if (sign)
         _f = -_f;
 
-    _f *= ((uint64_t)1 << FIXED32_FRAC_BITS);
+    // _f *= ((uint64_t)1 << FIXED32_FRAC_BITS);
+    uint32_t exp = ((float_parse*)&_f)->exp;
+    bool overflowed = (exp + FIXED32_FRAC_BITS) >= (1<<8);
+    assert(!overflowed);
+    ((float_parse*)&_f)->exp += FIXED32_FRAC_BITS;
+
+    assert((uint32_t)_f <= UINT32_MAX);
     fixed = _f;
 
     fixed = fixed32_apply_bitmask(fixed);
@@ -220,7 +227,11 @@ static inline float fixed32_tofloat_fp(fixed32 f)
         ff = fixed32_apply_bitmask(f);
     }
 
-    ff /= (float)((uint64_t)1 << FIXED32_FRAC_BITS);
+    // ff /= (float)((uint64_t)1 << FIXED32_FRAC_BITS);
+    uint32_t exp = ((float_parse*)&ff)->exp;
+    bool underflowed = (exp < FIXED32_FRAC_BITS);
+    assert(!underflowed);
+    ((float_parse*)&ff)->exp -= FIXED32_FRAC_BITS;
 
     return ff;
 }
