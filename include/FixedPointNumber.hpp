@@ -81,7 +81,14 @@ private:
 template<int INT_BIT_LEN, int FRAC_BIT_LEN>
 inline std::ostream& operator<<(std::ostream &out, const FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN> &n);
 
-
+typedef union {
+    double d;
+    struct {
+        uint64_t frac : 52;
+        uint64_t exp  : 11;
+        uint64_t sign :  1;
+    };
+} double_parse;
 
 /**************************************************************************
  ************************** Declaration is above  *************************
@@ -154,7 +161,10 @@ FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::FixedPointNumber(double d)
     bool sign = d < 0;
     if (sign)
         d = -d;
-    d *= (1ULL << FRAC_BIT_LEN);
+
+    // d *= (1ULL << FRAC_BIT_LEN);
+    reinterpret_cast<double_parse*>(&d)->exp += FRAC_BIT_LEN;
+
     this->value = apply_bitmask((uint32_t)d);
     if (sign)
         this->value = apply_bitmask(~this->value+1);
@@ -211,7 +221,14 @@ double FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::to_double() const
     else {
         d = apply_bitmask(this->value);
     }
-    d /= (double)(1ULL << FRAC_BIT_LEN);
+
+    // d /= (double)(1ULL << FRAC_BIT_LEN);
+    uint64_t exp = reinterpret_cast<double_parse*>(&d)->exp;
+    bool underflowed = (exp < FRAC_BIT_LEN);
+    if (underflowed)
+        d = 0;
+    else
+        reinterpret_cast<double_parse*>(&d)->exp -= FRAC_BIT_LEN;
     return d;
 }
 
