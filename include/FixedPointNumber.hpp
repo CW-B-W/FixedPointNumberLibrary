@@ -233,7 +233,7 @@ double FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::to_double_bitwise() const
             uint64_t d_sign : 1;
         };
         double d = 0;
-    };
+    } d_parse;
 
     /*
      *  Because the formula of double is
@@ -254,13 +254,13 @@ double FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::to_double_bitwise() const
     
     // let 2^d_exp = MSB
     int64_t exp = __builtin_ctzll(msb) - FRAC_BIT_LEN;
-    d_exp = exp + 1023;
+    d_parse.d_exp = exp + 1023;
 
     // the fraction part is behind msb
     uint64_t frac = value & ~msb;
-    d_frac = frac << (52 - __builtin_ctzll(msb));
+    d_parse.d_frac = frac << (52 - __builtin_ctzll(msb));
 
-    d_sign = sign;
+    d_parse.d_sign = sign;
 
     return d;
 }
