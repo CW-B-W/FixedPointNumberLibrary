@@ -220,7 +220,7 @@ static inline float fixed32_tofloat_fp(fixed32 f)
     float ff = 0.0f;
 
     if (fixed32_sign(f)) {
-        ff = fixed32_apply_bitmask(~f+1);
+        ff = fixed32_neg(f);
         ff = -ff;
     }
     else {
