@@ -126,10 +126,12 @@ static inline fixed32 fixed32_fromfloat(float _f)
     int32_t  exp  = f_parse.exp - 127;
     uint32_t frac = f_parse.frac;
 
-    if (FIXED32_FRAC_BITS >= 23)
+    #if (FIXED32_FRAC_BITS >= 23)
         fixed = ((uint64_t)1 << FIXED32_FRAC_BITS) | (frac << (FIXED32_FRAC_BITS - 23));
-    else
+    #else
         fixed = ((uint64_t)1 << FIXED32_FRAC_BITS) | (frac >> (23 - FIXED32_FRAC_BITS));
+    #endif
+    
     if (exp >= 0) {
         fixed <<= exp;
     }
