@@ -262,7 +262,7 @@ double FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::to_double_bitwise() const
 
     d_parse.d_sign = sign;
 
-    return d;
+    return d_parse.d;
 }
 
 template<int INT_BIT_LEN, int FRAC_BIT_LEN>
