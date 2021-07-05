@@ -57,6 +57,11 @@ static inline fixed32 fixed32_add(fixed32 a, fixed32 b)
     return fixed32_apply_bitmask(a + b);
 }
 
+static inline fixed32 fixed32_sub(fixed32 a, fixed32 b)
+{
+    return fixed32_add(a, fixed32_neg(b));
+}
+
 static inline fixed32 fixed32_mul(fixed32 a, fixed32 b)
 {
     uint32_t a_abs = fixed32_abs(a);
@@ -65,6 +70,27 @@ static inline fixed32 fixed32_mul(fixed32 a, fixed32 b)
     uint64_t product = (uint64_t) a_abs * b_abs;
 
     fixed32 result = fixed32_apply_bitmask(product >> FIXED32_FRAC_BITS);
+
+    bool a_sign = fixed32_sign(a);
+    bool b_sign = fixed32_sign(b);
+    if (a_sign ^ b_sign) {
+        result = fixed32_neg(result);
+    }
+    return result;
+}
+
+static inline fixed32 fixed32_div(fixed32 a, fixed32 b)
+{
+    uint32_t a_abs = fixed32_abs(a);
+    uint32_t b_abs = fixed32_abs(b);
+
+    // A = 2^-n * a = 2^-n * 2^-n * (a << n)
+    // B = 2^-n * b = 2^-n * b
+    // (a << n) is for better int division precision
+    // Q = A / B = 2^-n * ((a << n) / b)
+    uint64_t quotient = ((uint64_t)a_abs << FIXED32_FRAC_BITS) / ((uint64_t)b_abs);
+
+    fixed32 result = fixed32_apply_bitmask(quotient);
 
     bool a_sign = fixed32_sign(a);
     bool b_sign = fixed32_sign(b);
