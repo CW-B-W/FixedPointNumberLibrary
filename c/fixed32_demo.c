@@ -73,8 +73,9 @@ void fft_recursive(complex_fixed32 x[], int x_len)
     complex_fixed32 w = (complex_fixed32){.real = fixed32_fromfloat(1.0f), .imag = 0};
     complex_fixed32 w_rotate = complex_fixed32_polar(fixed32_fromfloat(1.0f), fixed32_fromfloat(-M_PI / M));
     for (int i = 0; i < M; ++i) {
-        x[i]   = complex_fixed32_add(x_even[i], complex_fixed32_mul(w, x_odd[i]));
-        x[i+M] = complex_fixed32_add(x_even[i], complex_fixed32_neg(complex_fixed32_mul(w, x_odd[i])));
+        complex_fixed32 w_x_odd = complex_fixed32_mul(w, x_odd[i]);
+        x[i]   = complex_fixed32_add(x_even[i], w_x_odd);
+        x[i+M] = complex_fixed32_add(x_even[i], complex_fixed32_neg(w_x_odd));
         // x[i]   = x_even[i] + W * x_odd[i];
         // x[i+M] = x_even[i] - W * x_odd[i];
 
