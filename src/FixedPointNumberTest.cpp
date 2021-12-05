@@ -59,6 +59,22 @@ public:
     }
 
     template<int T3, int T4>
+    FixedPointNumberTest operator/ (const FixedPointNumberTest<T3, T4> &rhs)
+    {
+        FixedPointNumberTest& lhs = *this;
+        cout << "[Test operator/]" << endl;
+        cout << "FixedPointNumberTest<" << T1 << ", " << T2 << "> * FixedPointNumberTest<" << T3 << ", " << T4 << ">" << endl;
+        cout << "Result will be " << "FixedPointNumberTest<" << T1 << ", " << T2 << ">" << endl;
+        cout << '\t' << lhs.to_double() << " / " << rhs.to_double() << endl;
+        FixedPointNumberTest res = FixedPointNumber<T1, T2>::operator/(static_cast<FixedPointNumber<T3,T4>>(rhs));
+        cout << '\t' << "= " << res.to_double() << endl;
+        cout << '\t' << "Expected if full-precision" << endl;
+        cout << '\t' << "= " << lhs.to_double() * rhs.to_double() << endl;
+        cout << endl;
+        return res;
+    }
+
+    template<int T3, int T4>
     FixedPointNumberTest operator- (const FixedPointNumberTest<T3, T4> &rhs)
     {
         FixedPointNumberTest& lhs = *this;
@@ -145,6 +161,7 @@ int main()
     (fp+fp);
     (fp-fp);
     (fp*fp);
+    (fp/fp);
 
     print_title("End of Test 0", 0);
     cout << endl;
@@ -240,6 +257,7 @@ int main()
     // cout << (fp1+fp2).to_double() << endl;
     // cout << (fp1-fp2).to_double() << endl;
     // cout << (fp1*fp2).to_double() << endl;
+    // cout << (fp1/fp2).to_double() << endl;
     // cout << endl;
 
     // fp1 = FixedPointNumber<3, 16>(1.2);
@@ -253,6 +271,7 @@ int main()
     // cout << (fp1+fp2).to_double() << endl;
     // cout << (fp1-fp2).to_double() << endl;
     // cout << (fp1*fp2).to_double() << endl;
+    // cout << (fp1/fp2).to_double() << endl;
     // cout << endl;
 
     // fp1 = FixedPointNumber<3, 16>(-1.2);
@@ -266,6 +285,7 @@ int main()
     // cout << (fp1+fp2).to_double() << endl;
     // cout << (fp1-fp2).to_double() << endl;
     // cout << (fp1*fp2).to_double() << endl;
+    // cout << (fp1/fp2).to_double() << endl;
     // cout << endl;
 
     // fp1 = FixedPointNumber<3, 16>(-1.2);
@@ -279,6 +299,7 @@ int main()
     // cout << (fp1+fp2).to_double() << endl;
     // cout << (fp1-fp2).to_double() << endl;
     // cout << (fp1*fp2).to_double() << endl;
+    // cout << (fp1/fp2).to_double() << endl;
     // cout << endl;
 
 
@@ -297,6 +318,7 @@ int main()
     // cout << (fp3+fp4).to_double() << endl;
     // cout << (fp3-fp4).to_double() << endl;
     // cout << (fp3*fp4).to_double() << endl;
+    // cout << (fp3/fp4).to_double() << endl;
     // cout << endl;
 
     // fp3 = FixedPointNumber<7, 8>(1.2);
@@ -310,6 +332,7 @@ int main()
     // cout << (fp3+fp4).to_double() << endl;
     // cout << (fp3-fp4).to_double() << endl;
     // cout << (fp3*fp4).to_double() << endl;
+    // cout << (fp3/fp4).to_double() << endl;
     // cout << endl;
 
     // fp3 = FixedPointNumber<7, 8>(-1.2);
@@ -323,6 +346,7 @@ int main()
     // cout << (fp3+fp4).to_double() << endl;
     // cout << (fp3-fp4).to_double() << endl;
     // cout << (fp3*fp4).to_double() << endl;
+    // cout << (fp3/fp4).to_double() << endl;
     // cout << endl;
 
     // fp3 = FixedPointNumber<7, 8>(-1.2);
@@ -336,6 +360,7 @@ int main()
     // cout << (fp3+fp4).to_double() << endl;
     // cout << (fp3-fp4).to_double() << endl;
     // cout << (fp3*fp4).to_double() << endl;
+    // cout << (fp3/fp4).to_double() << endl;
     // cout << endl;
     
     return 0;

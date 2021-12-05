@@ -31,6 +31,8 @@ public:
     template<int T1, int T2>
     inline FixedPointNumber operator* (const FixedPointNumber<T1, T2> &rhs) const;
     template<int T1, int T2>
+    inline FixedPointNumber operator/ (const FixedPointNumber<T1, T2> &rhs) const;
+    template<int T1, int T2>
     inline FixedPointNumber operator- (const FixedPointNumber<T1, T2> &rhs) const;
     template<int T1, int T2>
     inline FixedPointNumber operator+ (const FixedPointNumber<T1, T2> &rhs) const;
@@ -334,6 +336,44 @@ FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN> FixedPointNumber<INT_BIT_LEN, FRAC_B
 
 template<int INT_BIT_LEN, int FRAC_BIT_LEN>
 template<int T1, int T2>
+FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN> FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::operator/ (const FixedPointNumber<T1, T2> &rhs) const
+{
+    const FixedPointNumber &lhs = *this;
+    uint32_t sign = lhs.sign ^ rhs.sign;
+    uint64_t lv;
+    uint64_t rv;
+    if (lhs.sign) {
+        lv = (-lhs).value;
+    }
+    else {
+        lv = lhs.value;
+    }
+    if (rhs.sign) {
+        rv = (-rhs).value;
+    }
+    else {
+        rv = rhs.value;
+    }
+
+    // A = 2^-n * a = 2^-n * 2^-n * (a << n)
+    // B = 2^-n * b = 2^-n * b
+    // (a << n) is for better int division precision
+    // Q = A / B = 2^-n * ((a << n) / b)
+    lv <<= FRAC_BIT_LEN;
+    FixedPointNumber res;
+    uint64_t quotient = lv / rv;
+    if (quotient == 0)
+        res.underflowed = 1;
+    res.value = get_int_frac_part(quotient);
+
+    if (sign)
+        return -res;
+    else
+        return res;
+}
+
+template<int INT_BIT_LEN, int FRAC_BIT_LEN>
+template<int T1, int T2>
 FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN> FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::operator+ (const FixedPointNumber<T1, T2> &_rhs) const
 {
     const FixedPointNumber &lhs = *this;
@@ -366,13 +406,13 @@ FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN> FixedPointNumber<INT_BIT_LEN, FRAC_B
 template<int INT_BIT_LEN, int FRAC_BIT_LEN>
 std::ostream& operator<<(std::ostream &out, const FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN> &n)
 {
-    out << "0x";
+    // out << "0x";
     uint32_t u32 = 0;
     u32 |= n.sign    << (INT_BIT_LEN + FRAC_BIT_LEN);
     u32 |= n.integer << (FRAC_BIT_LEN);
     u32 |= n.fraction;
     std::ios_base::fmtflags f(out.flags());
-    out << std::setw((n.TOTAL_BIT_LEN+3)/4) << std::setfill('0') << std::hex << u32;
+    out << std::setw((n.TOTAL_BIT_LEN+3)/4) << std::setfill('0') << std::uppercase << std::hex << u32;
     out.flags(f);
     return out;
 }
