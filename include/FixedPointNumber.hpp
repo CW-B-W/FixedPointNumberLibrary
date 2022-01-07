@@ -25,7 +25,7 @@ public:
 
     inline uint32_t get_value()         const;
     inline double   to_double()         const; // use floating-point operations to convert to double
-    inline double   to_double_bitwise() const; // use bitwise        operation to convert to double
+    inline double   to_double_bitwise() const; // use bitwise        operations to convert to double
 
     inline FixedPointNumber operator- () const;
     template<int T1, int T2>
@@ -38,8 +38,8 @@ public:
     inline FixedPointNumber operator+ (const FixedPointNumber<T1, T2> &rhs) const;
 
     // min/max available positive value
-    static constexpr double PMIN_DOUBLE =  1.0 / (double)(1ULL << FRAC_BIT_LEN);          //std::pow(2, -FRAC_BIT_LEN);
-    static constexpr double PMAX_DOUBLE =  ((double)(1ULL << INT_BIT_LEN) - PMIN_DOUBLE); //std::pow(2, INT_BIT_LEN) - PMIN_DOUBLE;
+    static constexpr double PMIN_DOUBLE =  1.0 / (double)(1ULL << FRAC_BIT_LEN);          // std::pow(2, -FRAC_BIT_LEN);
+    static constexpr double PMAX_DOUBLE =  ((double)(1ULL << INT_BIT_LEN) - PMIN_DOUBLE); // std::pow(2, INT_BIT_LEN) - PMIN_DOUBLE;
     // min/max available negative value
     static constexpr double NMIN_DOUBLE = -((double)(1ULL << INT_BIT_LEN) - PMIN_DOUBLE); // -std::pow(2, INT_BIT_LEN);
     static constexpr double NMAX_DOUBLE = -1.0 / (double)(1ULL << FRAC_BIT_LEN);          // -std::pow(2, -FRAC_BIT_LEN);
@@ -324,9 +324,13 @@ FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN> FixedPointNumber<INT_BIT_LEN, FRAC_B
     product >>= (T2 - 1);
     product += product & 1; // rounding
     product >>= 1;
-    if (product >= (1 << (TOTAL_BIT_LEN-1)))
+    if (product >= (1 << (TOTAL_BIT_LEN-1))) {
         res.overflowed = 1;
-    res.value = get_int_frac_part(product);
+        res.value = (1 << (TOTAL_BIT_LEN-1))-1; // saturated
+    }
+    else {
+        res.value = get_int_frac_part(product);
+    }
 
     if (sign)
         return -res;
@@ -362,9 +366,13 @@ FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN> FixedPointNumber<INT_BIT_LEN, FRAC_B
     lv <<= FRAC_BIT_LEN;
     FixedPointNumber res;
     uint64_t quotient = lv / rv;
-    if (quotient == 0)
+    if (quotient == 0) {
         res.underflowed = 1;
-    res.value = get_int_frac_part(quotient);
+        res.value = 0;
+    }
+    else {
+        res.value = get_int_frac_part(quotient);
+    }
 
     if (sign)
         return -res;
@@ -384,11 +392,13 @@ FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN> FixedPointNumber<INT_BIT_LEN, FRAC_B
     uint64_t sum = lv + rv;
     if (get_sign_part(lv) == get_sign_part(rv) && get_sign_part(lv) != get_sign_part(sum)) {
         res.overflowed = 1;
+        res.value = (1 << (TOTAL_BIT_LEN-1))-1; // saturated
     }
     else if (apply_bitmask(sum) == (1ULL << (TOTAL_BIT_LEN-1))) {
         /* 1000....0001 is the NMIN_DOUBLE   */
         /* 1000....0000 is invalid value */
         res.overflowed = 1;
+        res.value = (1 << (TOTAL_BIT_LEN-1))-1; // saturated
     }
     res.value = apply_bitmask(sum);
     
