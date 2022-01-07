@@ -118,7 +118,7 @@ template<int INT_BIT_LEN, int FRAC_BIT_LEN>
 FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN>::FixedPointNumber(uint32_t u32)
 {
     assert(this->TOTAL_BIT_LEN <= (sizeof(this->value) * 8));
-    assert(u32 <= make_bitmask(TOTAL_BIT_LEN));
+    // assert(u32 <= make_bitmask(TOTAL_BIT_LEN));
     this->value = apply_bitmask(u32);
 }
 
