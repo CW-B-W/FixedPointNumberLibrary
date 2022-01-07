@@ -392,15 +392,20 @@ FixedPointNumber<INT_BIT_LEN, FRAC_BIT_LEN> FixedPointNumber<INT_BIT_LEN, FRAC_B
     uint64_t sum = lv + rv;
     if (get_sign_part(lv) == get_sign_part(rv) && get_sign_part(lv) != get_sign_part(sum)) {
         res.overflowed = 1;
-        res.value = (1ULL << (TOTAL_BIT_LEN-1))-1; // saturated
+        if (get_sign_part(lv) == 0)
+            res.value = (1ULL << (TOTAL_BIT_LEN-1)) - 1; // positive saturated
+        else
+            res.value = (1ULL << (TOTAL_BIT_LEN-1)) + 1; // negative saturated
     }
     else if (apply_bitmask(sum) == (1ULL << (TOTAL_BIT_LEN-1))) {
         /* 1000....0001 is the NMIN_DOUBLE   */
         /* 1000....0000 is invalid value */
         res.overflowed = 1;
-        res.value = (1ULL << (TOTAL_BIT_LEN-1))-1; // saturated
+        res.value = (1ULL << (TOTAL_BIT_LEN-1)) - 1; // saturated
     }
-    res.value = apply_bitmask(sum);
+    else {
+        res.value = apply_bitmask(sum);
+    }
     
     return res;
 }

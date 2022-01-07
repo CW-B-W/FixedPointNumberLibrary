@@ -362,6 +362,83 @@ int main()
     // cout << (fp3*fp4).to_double() << endl;
     // cout << (fp3/fp4).to_double() << endl;
     // cout << endl;
+
+    cout << "[Test positive overflow:]" << endl;
+    {
+        FixedPointNumber<3, 24> fp_overflow(0u);
+        while (!fp_overflow.is_overflowed()) {
+            fp_overflow = fp_overflow + FixedPointNumber<3, 24>(0.4);
+            cout << fp_overflow << ' ' << fp_overflow.to_double() << endl;
+        }
+        cout << hex << (1ULL << (32-1))-1 << endl;
+        cout << fp_overflow << ' ' << fp_overflow.to_double() << endl;
+        cout << "overflowed!" << endl;
+        for (int i = 0; i < 10; ++i) {
+            fp_overflow = fp_overflow + FixedPointNumber<3, 24>(0.1);
+            cout << fp_overflow << ' ' << fp_overflow.to_double() << endl;
+        }
+        for (int i = 0; i < 5; ++i) {
+            fp_overflow = fp_overflow - FixedPointNumber<3, 24>(0.1);
+            cout << fp_overflow << ' ' << fp_overflow.to_double() << endl;
+        }
+        for (int i = 0; i < 10; ++i) {
+            fp_overflow = fp_overflow + FixedPointNumber<3, 24>(0.1);
+            cout << fp_overflow << ' ' << fp_overflow.to_double() << endl;
+        }
+        for (int i = 0; i < 10; ++i) {
+            fp_overflow = fp_overflow * FixedPointNumber<3, 24>(1.1);
+            cout << fp_overflow << ' ' << fp_overflow.to_double() << endl;
+        }
+    }
+    cout << "[Test negative overflow:]" << endl;
+    {
+        FixedPointNumber<3, 24> fp_overflow(0u);
+        while (!fp_overflow.is_overflowed()) {
+            fp_overflow = fp_overflow + FixedPointNumber<3, 24>(-0.4);
+            cout << fp_overflow << ' ' << fp_overflow.to_double() << endl;
+        }
+        cout << hex << (1ULL << (32-1))-1 << endl;
+        cout << fp_overflow << ' ' << fp_overflow.to_double() << endl;
+        cout << "overflowed!" << endl;
+        for (int i = 0; i < 10; ++i) {
+            fp_overflow = fp_overflow + FixedPointNumber<3, 24>(-0.1);
+            cout << fp_overflow << ' ' << fp_overflow.to_double() << endl;
+        }
+        for (int i = 0; i < 5; ++i) {
+            fp_overflow = fp_overflow - FixedPointNumber<3, 24>(-0.1);
+            cout << fp_overflow << ' ' << fp_overflow.to_double() << endl;
+        }
+        for (int i = 0; i < 10; ++i) {
+            fp_overflow = fp_overflow + FixedPointNumber<3, 24>(-0.1);
+            cout << fp_overflow << ' ' << fp_overflow.to_double() << endl;
+        }
+        for (int i = 0; i < 10; ++i) {
+            fp_overflow = fp_overflow * FixedPointNumber<3, 24>(1.1);
+            cout << fp_overflow << ' ' << fp_overflow.to_double() << endl;
+        }
+    }
+    cout << "[Test positive multiply overflow:]" << endl;
+    {
+        FixedPointNumber<3, 24> fp_overflow1(4.0);
+        FixedPointNumber<3, 24> fp_overflow2(4.0);
+        FixedPointNumber<3, 24> fp_overflow = fp_overflow1 * fp_overflow2;
+        cout << fp_overflow.is_overflowed() << endl;
+        cout << fp_overflow1 << ' ' << fp_overflow1.to_double() << endl;
+        cout << fp_overflow2 << ' ' << fp_overflow2.to_double() << endl;
+        cout << fp_overflow << ' ' << fp_overflow.to_double() << endl;
+    }
+    cout << "[Test negative multiply overflow:]" << endl;
+    {
+        FixedPointNumber<3, 24> fp_overflow1(4.0);
+        FixedPointNumber<3, 24> fp_overflow2(-4.0);
+        FixedPointNumber<3, 24> fp_overflow = fp_overflow1 * fp_overflow2;
+        cout << fp_overflow.is_overflowed() << endl;
+        cout << fp_overflow1 << ' ' << fp_overflow1.to_double() << endl;
+        cout << fp_overflow2 << ' ' << fp_overflow2.to_double() << endl;
+        cout << fp_overflow << ' ' << fp_overflow.to_double() << endl;
+    }
+    
+    
     
     return 0;
 }
