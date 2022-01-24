@@ -9,9 +9,14 @@
 typedef uint32_t fixed32;
 
 #define FIXED32_SIGN_BIT   ( 1)
-#define FIXED32_INT_BITS   ( 7)
-#define FIXED32_FRAC_BITS  (24)
+#define FIXED32_INT_BITS   ( 3)
+#define FIXED32_FRAC_BITS  (12)
 #define FIXED32_TOTAL_BITS ((FIXED32_SIGN_BIT) + (FIXED32_INT_BITS) + (FIXED32_FRAC_BITS))
+
+//negative saturated value
+#define FIXED32_POS_SAT    (((uint64_t)1 << (FIXED32_INT_BITS+FIXED32_FRAC_BITS)) - 1)
+//negative saturated value
+#define FIXED32_NEG_SAT    (((uint64_t)1 << (FIXED32_INT_BITS+FIXED32_FRAC_BITS)) + 1)
 
 #if FIXED32_SIGN_BIT != 1
     #error "FIXED32_SIGN_BIT must be 1"
@@ -49,12 +54,21 @@ static inline fixed32 fixed32_neg(fixed32 f)
 // return abs(f)
 static inline fixed32 fixed32_abs(fixed32 f)
 {
-    return fixed32_sign(f) ? fixed32_neg(f) : f;
+    return fixed32_sign(f) ? fixed32_neg(f) : fixed32_apply_bitmask(f);
 }
 
 static inline fixed32 fixed32_add(fixed32 a, fixed32 b)
 {
-    return fixed32_apply_bitmask(a + b);
+    fixed32 sum = a + b;
+    if (fixed32_sign(a) == fixed32_sign(b) && fixed32_sign(a) != fixed32_sign(sum)) {
+        if (fixed32_sign(a)) {
+            sum = FIXED32_NEG_SAT;
+        }
+        else {
+            sum = FIXED32_POS_SAT;
+        }
+    }
+    return fixed32_apply_bitmask(sum);
 }
 
 static inline fixed32 fixed32_sub(fixed32 a, fixed32 b)
@@ -67,9 +81,13 @@ static inline fixed32 fixed32_mul(fixed32 a, fixed32 b)
     uint32_t a_abs = fixed32_abs(a);
     uint32_t b_abs = fixed32_abs(b);
 
-    uint64_t product = (uint64_t) a_abs * b_abs;
+    uint64_t product = ((uint64_t) a_abs * b_abs) >> FIXED32_FRAC_BITS;
 
-    fixed32 result = fixed32_apply_bitmask(product >> FIXED32_FRAC_BITS);
+    fixed32 result;
+    if (product >= (1 << (FIXED32_INT_BITS+FIXED32_FRAC_BITS)))
+        result = FIXED32_POS_SAT;
+    else
+        result = fixed32_apply_bitmask(product);
 
     bool a_sign = fixed32_sign(a);
     bool b_sign = fixed32_sign(b);
@@ -106,11 +124,9 @@ static inline bool fixed32_gt(fixed32 a, fixed32 b)
     bool a_sign = fixed32_sign(a);
     bool b_sign = fixed32_sign(b);
     if (a_sign != b_sign) // either a or b is negative
-        return a_sign;
-    else if (a_sign == 0) // both positive
+        return !a_sign;
+    else
         return a > b;
-    else                  // both negative
-        return a < b;
     assert(0);
 }
 
